@@ -1,0 +1,13 @@
+import React from "react";
+
+function App() {
+  return (
+    <div style={{ padding: "2rem", fontFamily: "Georgia, serif" }}>
+      <h1>Sayaj</h1>
+      <p>Página base funcionando correctamente.</p>
+    </div>
+  );
+}
+
+export default App;
+
