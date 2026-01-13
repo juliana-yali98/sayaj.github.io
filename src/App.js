@@ -1,16 +1,26 @@
 import React from 'react';
 
-export default function App() {
+export default function ToBRFVLanding() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div 
-        className="relative h-screen bg-cover bg-center"
-        style={{
-          backgroundImage: 'linear-gradient(135deg, rgba(79, 70, 229, 0.8) 0%, rgba(168, 85, 247, 0.7) 100%), url("https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=1920&q=80")',
-        }}
-      >
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-6">
+      {/* Hero Section with Video Background */}
+      <div className="relative h-screen overflow-hidden">
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="https://cdn.coverr.co/videos/coverr-farmers-harvesting-tomatoes-5025/1080p.mp4" type="video/mp4" />
+          Tu navegador no soporta video HTML5.
+        </video>
+        
+        {/* Overlay oscuro para mejorar legibilidad */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-indigo-900/70 to-purple-800/80"></div>
+        
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-white px-6">
           <h1 className="text-4xl md:text-6xl font-bold text-center mb-8 max-w-5xl leading-tight">
             Tomato Brown Rugose Fruit Virus in Tomato and Pepper crops in Colombia
           </h1>
