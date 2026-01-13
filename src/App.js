@@ -1,20 +1,6 @@
-<<<<<<< HEAD
-function App() {
-  return (
-    <div style={{ padding: "40px", fontFamily: "Arial" }}>
-      <h1>Sayaj</h1>
-      <p>Página base funcionando correctamente.</p>
-    </div>
-  );
-}
-
-export default App;
-
-
-=======
 import React from 'react';
 
-export default function ToBRFVLanding() {
+export default function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -87,4 +73,3 @@ export default function ToBRFVLanding() {
     </div>
   );
 }
->>>>>>> 973d564 (Diseño)
