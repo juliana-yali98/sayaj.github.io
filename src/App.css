@@ -1,38 +1,37 @@
-.App {
-  text-align: center;
+:root {
+  --fondo: #f4f6f5;
+  --card: #ffffff;
+  --texto: #1f2933;
+
+  --rojo: #c73a2f;
+  --verde: #4f8f6f;
+  --azul: #3a7bd5;
+  --naranja: #f28c28;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background-color: var(--fondo);
+  color: var(--texto);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.app {
+  width: 100%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+section {
+  padding: 4rem 8%;
 }
 
-.App-link {
-  color: #61dafb;
+h1, h2 {
+  margin-bottom: 1rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
+
