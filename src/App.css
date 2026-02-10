@@ -7,6 +7,9 @@
   --verde: #4f8f6f;
   --azul: #3a7bd5;
   --naranja: #f28c28;
+
+  --gris-suave: #e5e7eb;
+  --texto-secundario: #4b5563;
 }
 
 body {
@@ -20,18 +23,63 @@ body {
   width: 100%;
 }
 
+/* ===== SECCIONES GENERALES ===== */
 section {
   padding: 4rem 8%;
 }
 
-h1, h2 {
+h1,
+h2 {
   margin-bottom: 1rem;
+  color: var(--texto);
 }
 
+/* ===== TARJETAS ===== */
 .card {
   background: var(--card);
   border-radius: 14px;
   padding: 1.5rem;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== ABSTRACT ===== */
+.abstract-section {
+  max-width: 950px;
+  margin: 0 auto 4rem auto;
+  padding: 2.5rem 3rem;
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.abstract-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 3px solid var(--azul);
+  display: inline-block;
+  padding-bottom: 0.3rem;
+}
+
+.abstract-section p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--texto-secundario);
+  margin-bottom: 1.2rem;
+  text-align: justify;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  section {
+    padding: 3rem 6%;
+  }
+
+  .abstract-section {
+    padding: 2rem;
+  }
+
+  .abstract-section p {
+    font-size: 1rem;
+  }
 }
 
