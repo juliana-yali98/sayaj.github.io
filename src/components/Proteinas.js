@@ -45,7 +45,7 @@ const ProteinViewerPro = () => {
       >
       
         <iframe
-          src="/molstar-viewer.html"
+          src={`${process.env.PUBLIC_URL}/molstar-viewer.html`}
           title="Protein Structure Viewer"
           style={{
             width: "100%",
