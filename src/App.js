@@ -15,7 +15,6 @@ function App() {
       <Abstract />
       <Mapa />
       <Redes />          {/* Visualización de grafo interactivo */}
-      <RedesConMapa />   {/* Red sobre mapa geográfico */}
       <Proteinas />
       <Comparativa />
     </div>
