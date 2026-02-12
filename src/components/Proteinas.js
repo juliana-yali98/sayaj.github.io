@@ -43,6 +43,7 @@ const ProteinViewerPro = () => {
           backgroundColor: "#ffffff"
         }}
       >
+      
         <iframe
           src="/molstar-viewer.html"
           title="Protein Structure Viewer"
