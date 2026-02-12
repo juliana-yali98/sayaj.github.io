@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/sayaj.github.io/static/css/main.9326ec5d.css",
-    "main.js": "/sayaj.github.io/static/js/main.e0db3c19.js",
+    "main.css": "/sayaj.github.io/static/css/main.bf6db50d.css",
+    "main.js": "/sayaj.github.io/static/js/main.7b7bc660.js",
     "static/js/453.2793d6bb.chunk.js": "/sayaj.github.io/static/js/453.2793d6bb.chunk.js",
     "index.html": "/sayaj.github.io/index.html",
-    "main.9326ec5d.css.map": "/sayaj.github.io/static/css/main.9326ec5d.css.map",
-    "main.e0db3c19.js.map": "/sayaj.github.io/static/js/main.e0db3c19.js.map",
+    "main.bf6db50d.css.map": "/sayaj.github.io/static/css/main.bf6db50d.css.map",
+    "main.7b7bc660.js.map": "/sayaj.github.io/static/js/main.7b7bc660.js.map",
     "453.2793d6bb.chunk.js.map": "/sayaj.github.io/static/js/453.2793d6bb.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9326ec5d.css",
-    "static/js/main.e0db3c19.js"
+    "static/css/main.bf6db50d.css",
+    "static/js/main.7b7bc660.js"
   ]
 }
