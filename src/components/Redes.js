@@ -81,7 +81,7 @@ const RedesConMapa = () => {
           '1': 'departamento',
           '2': 'municipio',
           '3': 'vereda',
-          '5': 'tomate',
+          '5': 'Tomato',
           '7': 'pimenton',
           '8': 'betweenness',
           '0': 'pagerank',
@@ -132,23 +132,23 @@ const RedesConMapa = () => {
   const calculateStats = (data) => {
     if (!data || !data.nodes) return;
     
-    let tomateCount = 0;
+    let TomatoCount = 0;
     let pimentonCount = 0;
     let bothCount = 0;
     
     data.nodes.forEach(node => {
-      const hasTomate = node.tomate === true || node.tomate === 'true';
+      const hasTomato = node.Tomato === true || node.Tomato === 'true';
       const hasPimenton = node.pimenton === true || node.pimenton === 'true';
       
-      if (hasTomate) tomateCount++;
+      if (hasTomato) TomatoCount++;
       if (hasPimenton) pimentonCount++;
-      if (hasTomate && hasPimenton) bothCount++;
+      if (hasTomato && hasPimenton) bothCount++;
     });
     
     setStats({
       totalNodes: data.nodes.length,
       totalEdges: data.edges.length,
-      tomateNodes: tomateCount,
+      TomatoNodes: TomatoCount,
       pimentonNodes: pimentonCount,
       bothNodes: bothCount
     });
@@ -159,8 +159,8 @@ const RedesConMapa = () => {
     
     let filteredNodes = networkData.nodes;
     
-    if (filterType === 'tomate') {
-      filteredNodes = filteredNodes.filter(n => n.tomate === true || n.tomate === 'true');
+    if (filterType === 'Tomato') {
+      filteredNodes = filteredNodes.filter(n => n.Tomato === true || n.Tomato === 'true');
     } else if (filterType === 'pimenton') {
       filteredNodes = filteredNodes.filter(n => n.pimenton === true || n.pimenton === 'true');
     }
@@ -190,11 +190,11 @@ const RedesConMapa = () => {
   return (
     <section className="redes-mapa-section">
       <div className="redes-mapa-container">
-        <h2 className="redes-mapa-title">REDES DE TRANSMISIÓN DEL VIRUS</h2>
+        <h2 className="redes-mapa-title">VIRUS TRANSMISSION NETWORKS</h2>
         
         <p className="redes-mapa-description">
-          Visualización geográfica de las redes de transmisión del ToBRFV. 
-          Cada punto representa una vereda y las líneas muestran conexiones de riesgo de transmisión.
+          Geographic visualization of the ToBRFV transmission networks.
+Each point represents a path, and the lines show transmission risk connections.
         </p>
 
         {/* Tabs */}
@@ -223,16 +223,16 @@ const RedesConMapa = () => {
               Todos
             </button>
             <button 
-              className={filterType === 'tomate' ? 'filter-btn active' : 'filter-btn'}
-              onClick={() => setFilterType('tomate')}
+              className={filterType === 'Tomato' ? 'filter-btn active' : 'filter-btn'}
+              onClick={() => setFilterType('Tomato')}
             >
-              🍅 Tomate
+              🍅 Tomato
             </button>
             <button 
               className={filterType === 'pimenton' ? 'filter-btn active' : 'filter-btn'}
               onClick={() => setFilterType('pimenton')}
             >
-              🌶️ Pimentón
+              🌶️ Pepper
             </button>
           </div>
           
@@ -243,7 +243,7 @@ const RedesConMapa = () => {
                 checked={showConnections}
                 onChange={(e) => setShowConnections(e.target.checked)}
               />
-              <span>Mostrar conexiones</span>
+              <span>Mostrar Network connections</span>
             </label>
           </div>
         </div>
@@ -253,19 +253,19 @@ const RedesConMapa = () => {
           <div className="redes-mapa-stats">
             <div className="stat-card">
               <div className="stat-value">{stats.totalNodes}</div>
-              <div className="stat-label">Veredas</div>
+              <div className="stat-label">Sidewalks</div>
             </div>
             <div className="stat-card">
               <div className="stat-value">{stats.totalEdges}</div>
-              <div className="stat-label">Conexiones</div>
+              <div className="stat-label">Network connections</div>
             </div>
             <div className="stat-card">
-              <div className="stat-value">{stats.tomateNodes}</div>
-              <div className="stat-label">🍅 Tomate</div>
+              <div className="stat-value">{stats.TomatoNodes}</div>
+              <div className="stat-label">🍅 Tomato</div>
             </div>
             <div className="stat-card">
               <div className="stat-value">{stats.pimentonNodes}</div>
-              <div className="stat-label">🌶️ Pimentón</div>
+              <div className="stat-label">🌶️ Pepper</div>
             </div>
           </div>
         )}
@@ -334,14 +334,14 @@ const RedesConMapa = () => {
                           <span className="label">🏛️ Departamento:</span>
                           <span className="value">{node.departamento}</span>
                         </div>
-                        {node.tomate && (
+                        {node.Tomato && (
                           <div className="info-row">
-                            <span className="badge tomate">🍅 Cultivo de Tomate</span>
+                            <span className="badge Tomato">🍅 Cultivo de Tomato</span>
                           </div>
                         )}
                         {node.pimenton && (
                           <div className="info-row">
-                            <span className="badge pimenton">🌶️ Cultivo de Pimentón</span>
+                            <span className="badge pimenton">🌶️ Cultivo de Pepper</span>
                           </div>
                         )}
                         {node.pagerank && (
@@ -361,30 +361,31 @@ const RedesConMapa = () => {
 
         {/* Legend */}
         <div className="redes-mapa-legend">
-          <h4>Leyenda</h4>
+          <h4>Label</h4>
           <div className="legend-grid">
             <div className="legend-item">
               <div className="legend-node" style={{ backgroundColor: '#E74C3C' }}></div>
-              <span>Vereda con cultivos</span>
+              <span>Rural district with crops</span>
             </div>
             <div className="legend-item">
               <div className="legend-line"></div>
-              <span>Conexión de riesgo</span>
+              <span>Risk connection</span>
             </div>
             <div className="legend-item">
-              <span className="legend-info">Tamaño = Importancia en la red</span>
+              <span className="legend-info">Size = Importance in the network
+</span>
             </div>
             <div className="legend-item">
-              <span className="legend-info">Opacidad = Intensidad de conexión</span>
+              <span className="legend-info">Opacity = Connection strength</span>
             </div>
           </div>
         </div>
 
         <div className="redes-mapa-info">
           <p>
-            <strong>💡 Nota:</strong> Esta visualización muestra la estructura espacial de la red de riesgo de transmisión.
-            Las conexiones representan rutas potenciales de dispersión del virus entre veredas cultivadoras.
-            {!showConnections && " Activa 'Mostrar conexiones' para ver las rutas de transmisión."}
+            <strong>💡 Note:</strong> This visualization shows the spatial structure of the transmission risk network.
+The network connections represent potential routes of virus spread between cultivating sidewalks.
+            {!showConnections && " Activa 'Mostrar Network connections' para ver las rutas de transmisión."}
           </p>
         </div>
       </div>

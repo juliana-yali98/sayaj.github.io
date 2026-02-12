@@ -190,7 +190,7 @@ const Mapa = () => {
   return (
     <section className="mapa-section">
       <div className="mapa-container">
-        <h2 className="mapa-title">DISTRIBUCIÓN GLOBAL DEL ToBRFV</h2>
+        <h2 className="mapa-title">GLOBAL DISTRIBUTION OF ToBRFV</h2>
         
         <div className="mapa-tabs">
           <button 
@@ -200,16 +200,16 @@ const Mapa = () => {
             GLOBAL
           </button>
           <button 
-            className={filter === 'TOMATE' ? 'tab active' : 'tab'}
-            onClick={() => setFilter('TOMATE')}
+            className={filter === 'TOMATO' ? 'tab active' : 'tab'}
+            onClick={() => setFilter('TOMATO')}
           >
-            TOMATE
+            TOMATO
           </button>
           <button 
-            className={filter === 'PIMENTÓN' ? 'tab active' : 'tab'}
-            onClick={() => setFilter('PIMENTÓN')}
+            className={filter === 'PEPPER' ? 'tab active' : 'tab'}
+            onClick={() => setFilter('PEPPER')}
           >
-            PIMENTÓN
+            PEPPER
           </button>
         </div>
 
@@ -247,7 +247,7 @@ const Mapa = () => {
                   <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
                     <div className="country-tooltip">
                       <strong>{country}</strong>
-                      <div>Detecciones: {info.total}</div>
+                      <div>DETECTIONS: {info.total}</div>
                     </div>
                   </Tooltip>
                   
@@ -256,7 +256,7 @@ const Mapa = () => {
                       <h3>{country}</h3>
                       <div className="popup-stats">
                         <div className="stat">
-                          <span className="label">📍 Detecciones:</span>
+                          <span className="label">📍 DETECTIONS:</span>
                           <span className="value">{info.total}</span>
                         </div>
                         <div className="stat">
@@ -289,23 +289,23 @@ const Mapa = () => {
         </div>
 
         <div className="mapa-legend">
-          <h4>Leyenda</h4>
+          <h4>Label</h4>
           <div className="legend-items">
             <div className="legend-item">
               <div className="legend-color" style={{ backgroundColor: '#E74C3C' }}></div>
-              <span>50+ detecciones</span>
+              <span>50+ DETECTIONS</span>
             </div>
             <div className="legend-item">
               <div className="legend-color" style={{ backgroundColor: '#E67E22' }}></div>
-              <span>20-49 detecciones</span>
+              <span>20-49 DETECTIONS</span>
             </div>
             <div className="legend-item">
               <div className="legend-color" style={{ backgroundColor: '#F39C12' }}></div>
-              <span>10-19 detecciones</span>
+              <span>10-19 DETECTIONS</span>
             </div>
             <div className="legend-item">
               <div className="legend-color" style={{ backgroundColor: '#F8B739' }}></div>
-              <span>1-9 detecciones</span>
+              <span>1-9 DETECTIONS</span>
             </div>
           </div>
         </div>
