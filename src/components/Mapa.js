@@ -88,7 +88,7 @@ const Mapa = () => {
 
   useEffect(() => {
     // Cargar el archivo TSV
-    fetch('/home/alejandro/sayaj.github.io/public/data.tsv') // Asegúrate de poner tu archivo aquí
+    fetch(`${process.env.PUBLIC_URL}/data.tsv`) // Asegúrate de poner tu archivo aquí
       .then(response => response.text())
       .then(text => {
         const rows = text.split('\n');
