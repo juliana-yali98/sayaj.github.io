@@ -1,85 +1,76 @@
 import React, { useState } from "react";
-import "./Comparativa.css";
+import "./ComparativaPro.css";
 
-function Comparativa() {
-  const [selectedImage, setSelectedImage] = useState(null);
+function ComparativaPro() {
+  const [hovered, setHovered] = useState(null);
 
   return (
-    <section className="comparative-section">
+    <section className="comparativa-section">
+      <h2 className="title">
+        Comparative Pathogenesis of ToBRFV
+      </h2>
 
-      <div className="section-header">
-        <h2>Comparative Pathogenesis of ToBRFV</h2>
-        <p>
-          Differential symptom expression and epidemiological severity of 
-          Tomato brown rugose fruit virus (ToBRFV) in tomato and pepper crops.
-        </p>
-      </div>
+      <p className="subtitle">
+        Differential symptom expression and epidemiological severity of Tomato brown rugose fruit virus (ToBRFV) in tomato and pepper crops.
+      </p>
 
-      <div className="comparison-grid">
-
-        {/* TOMATO */}
-        <div className="comparison-card">
-          <div className="image-wrapper">
-            <img
-              src={`${process.env.PUBLIC_URL}/images/tobrfv-tomato.jpg`}
-              alt="ToBRFV symptoms in tomato"
-              onClick={() =>
-                setSelectedImage(`${process.env.PUBLIC_URL}/images/tobrfv-tomato.jpg`)
-              }
-            />
-            <div className="severity severe">High Severity</div>
+      <div className="grid-container">
+        
+        {/* TOMATO CARD */}
+        <div 
+          className={`card ${hovered === "tomato" ? "active" : ""}`}
+          onMouseEnter={() => setHovered("tomato")}
+          onMouseLeave={() => setHovered(null)}
+        >
+          <div className="image-container">
+            <img src={`${process.env.PUBLIC_URL}/images/tomato_tobrfv.jpg`} alt="ToBRFV in Tomato"/>
+            <span className="severity-badge high">High Severity</span>
           </div>
 
-          <div className="card-content">
-            <h3>Tomato (Solanum lycopersicum)</h3>
+          <h3>Tomato (Solanum lycopersicum)</h3>
 
-            <ul>
-              <li>Severe mosaic and chlorotic mottling</li>
-              <li>Fruit rugosity and brown necrotic patches</li>
-              <li>Uneven ripening and deformation</li>
-              <li>Significant yield reduction (&gt;30%)</li>
-            </ul>
+          <ul>
+            <li>Severe mosaic and chlorotic mottling</li>
+            <li>Fruit rugosity and brown necrotic lesions</li>
+            <li>Uneven ripening and deformation</li>
+            <li>Yield reduction frequently exceeding 30%</li>
+          </ul>
 
-            <div className="severity-bar">
-              <div className="bar-fill tomato"></div>
-            </div>
+          <div className="severity-bar">
+            <div className="bar-fill tomato"></div>
           </div>
         </div>
 
-        {/* PEPPER */}
-        <div className="comparison-card">
-          <div className="image-wrapper">
-            <img
-              src={`${process.env.PUBLIC_URL}/images/tobrfv-pepper.jpg`}
-              alt="ToBRFV symptoms in pepper"
-              onClick={() =>
-                setSelectedImage(`${process.env.PUBLIC_URL}/images/tobrfv-pepper.jpg`)
-              }
-            />
-            <div className="severity moderate">Moderate Severity</div>
+        {/* PEPPER CARD */}
+        <div 
+          className={`card ${hovered === "pepper" ? "active" : ""}`}
+          onMouseEnter={() => setHovered("pepper")}
+          onMouseLeave={() => setHovered(null)}
+        >
+          <div className="image-container">
+            <img src={`${process.env.PUBLIC_URL}/images/pepper_tobrfv.jpg`} alt="ToBRFV in Pepper"/>
+            <span className="severity-badge moderate">Moderate Severity</span>
           </div>
 
-          <div className="card-content">
-            <h3>Pepper (Capsicum annuum)</h3>
+          <h3>Pepper (Capsicum annuum)</h3>
 
-            <ul>
-              <li>Mild to moderate mosaic pattern</li>
-              <li>Leaf blistering and distortion</li>
-              <li>Chlorotic fruit spotting</li>
-              <li>Variable cultivar-dependent expression</li>
-            </ul>
+          <ul>
+            <li>Mild to moderate mosaic pattern</li>
+            <li>Leaf blistering and distortion</li>
+            <li>Chlorotic fruit spotting</li>
+            <li>Cultivar-dependent symptom variability</li>
+          </ul>
 
-            <div className="severity-bar">
-              <div className="bar-fill pepper"></div>
-            </div>
+          <div className="severity-bar">
+            <div className="bar-fill pepper"></div>
           </div>
         </div>
 
       </div>
 
-      {/* Technical Table */}
-      <div className="technical-table">
-        <h4>Technical Comparative Metrics</h4>
+      {/* TECHNICAL TABLE */}
+      <div className="metrics">
+        <h3>Technical Comparative Metrics</h3>
         <table>
           <thead>
             <tr>
@@ -106,26 +97,16 @@ function Comparativa() {
             </tr>
             <tr>
               <td>Economic Risk Level</td>
-              <td>Critical</td>
-              <td>Significant</td>
+              <td className="critical">Critical</td>
+              <td className="significant">Significant</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <p className="figure-caption">
-        Figure 2. Comparative symptom expression and epidemiological severity of ToBRFV in tomato and pepper.
-      </p>
-
-      {selectedImage && (
-        <div className="modal" onClick={() => setSelectedImage(null)}>
-          <img src={selectedImage} alt="Zoomed symptom" />
-        </div>
-      )}
-
     </section>
   );
 }
 
-export default Comparativa;
+export default ComparativaPro;
 
