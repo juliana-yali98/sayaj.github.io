@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import 'leaflet/dist/leaflet.css'; // ← IMPORTANTE: CSS de Leaflet
 import Hero from "./components/Hero";
+import Abstract from "./components/Abstract";
 import Mapa from "./components/Mapa";
 import Redes from "./components/Redes";
 import Proteinas from "./components/Proteinas";
