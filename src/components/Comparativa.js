@@ -23,7 +23,7 @@ function ComparativaPro() {
           onMouseLeave={() => setHovered(null)}
         >
           <div className="image-container">
-            <img src={`${process.env.PUBLIC_URL}/images/tomato_tobrfv.jpg`} alt="ToBRFV in Tomato"/>
+            <img src={`${process.env.PUBLIC_URL}/tomato_tobrfv.jpg`} alt="ToBRFV in Tomato"/>
             <span className="severity-badge high">High Severity</span>
           </div>
 
@@ -48,7 +48,7 @@ function ComparativaPro() {
           onMouseLeave={() => setHovered(null)}
         >
           <div className="image-container">
-            <img src={`${process.env.PUBLIC_URL}/images/pepper_tobrfv.jpg`} alt="ToBRFV in Pepper"/>
+            <img src={`${process.env.PUBLIC_URL}/pepper_tobrfv.jpg`} alt="ToBRFV in Pepper"/>
             <span className="severity-badge moderate">Moderate Severity</span>
           </div>
 
