@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/sayaj.github.io/static/css/main.3e135c6e.css",
-    "main.js": "/sayaj.github.io/static/js/main.e6f43d1b.js",
+    "main.css": "/sayaj.github.io/static/css/main.38029b0e.css",
+    "main.js": "/sayaj.github.io/static/js/main.abdc4d69.js",
     "static/js/453.2793d6bb.chunk.js": "/sayaj.github.io/static/js/453.2793d6bb.chunk.js",
     "index.html": "/sayaj.github.io/index.html",
-    "main.3e135c6e.css.map": "/sayaj.github.io/static/css/main.3e135c6e.css.map",
-    "main.e6f43d1b.js.map": "/sayaj.github.io/static/js/main.e6f43d1b.js.map",
+    "main.38029b0e.css.map": "/sayaj.github.io/static/css/main.38029b0e.css.map",
+    "main.abdc4d69.js.map": "/sayaj.github.io/static/js/main.abdc4d69.js.map",
     "453.2793d6bb.chunk.js.map": "/sayaj.github.io/static/js/453.2793d6bb.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3e135c6e.css",
-    "static/js/main.e6f43d1b.js"
+    "static/css/main.38029b0e.css",
+    "static/js/main.abdc4d69.js"
   ]
 }
