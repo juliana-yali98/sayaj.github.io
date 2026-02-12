@@ -6,9 +6,20 @@ function ComparativaPro() {
 
   return (
     <section className="comparativa-section">
-      <h2 className="title">
-        Comparative Pathogenesis of ToBRFV
+    <h2
+        style={{
+          fontSize: "2.5rem",          // Igual que mapa-title
+          fontWeight: 700,
+          textAlign: "center",
+          marginBottom: "40px",
+          color: "#2c3e50",            // Mismo azul que global
+          letterSpacing: "-0.5px"
+        }}
+      >
+        COMPARATIVE PATHOGENESIS OF ToBRFV
       </h2>
+
+
 
       <p className="subtitle">
         Differential symptom expression and epidemiological severity of Tomato brown rugose fruit virus (ToBRFV) in tomato and pepper crops.

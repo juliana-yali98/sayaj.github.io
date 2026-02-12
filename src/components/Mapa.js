@@ -87,70 +87,52 @@ const Mapa = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Cargar el archivo TSV
-    fetch(`${process.env.PUBLIC_URL}/data.tsv`) // Asegúrate de poner tu archivo aquí
-      .then(response => response.text())
+    fetch(`${process.env.PUBLIC_URL}/data.tsv`)
+      .then(res => res.text())
       .then(text => {
         const rows = text.split('\n');
         const headers = rows[0].split('\t');
-        
-        const parsedData = rows.slice(1)
-          .filter(row => row.trim())
-          .map(row => {
-            const values = row.split('\t');
-            const entry = {};
-            headers.forEach((header, index) => {
-              entry[header] = values[index];
-            });
-            return entry;
+        const parsedData = rows.slice(1).filter(r => r.trim()).map(row => {
+          const values = row.split('\t');
+          const entry = {};
+          headers.forEach((header, i) => {
+            entry[header] = values[i];
           });
-
+          return entry;
+        });
         setData(parsedData);
         processCountryData(parsedData);
         setLoading(false);
       })
-      .catch(error => {
-        console.error('Error loading TSV:', error);
+      .catch(err => {
+        console.error(err);
         setLoading(false);
       });
   }, []);
 
   const processCountryData = (rawData) => {
     const grouped = {};
-    
     rawData.forEach(entry => {
       const country = entry.Country;
       const host = entry.Host;
       const year = entry.Collection_Date ? entry.Collection_Date.split('-')[0] : 'Unknown';
-      
+
       if (!grouped[country]) {
-        grouped[country] = {
-          total: 0,
-          hosts: new Set(),
-          years: new Set(),
-          tomate: 0,
-          pimenton: 0,
-          isolates: []
-        };
+        grouped[country] = { total: 0, hosts: new Set(), years: new Set(), tomate: 0, pimenton: 0, isolates: [] };
       }
-      
+
       grouped[country].total++;
       grouped[country].hosts.add(host);
       grouped[country].years.add(year);
       grouped[country].isolates.push(entry.Isolate || 'Unknown');
-      
-      // Clasificar por tipo de huésped
-      if (host && host.toLowerCase().includes('lycopersicum')) {
-        grouped[country].tomate++;
-      } else if (host && host.toLowerCase().includes('capsicum')) {
-        grouped[country].pimenton++;
-      }
+
+      if (host && host.toLowerCase().includes('lycopersicum')) grouped[country].tomate++;
+      else if (host && host.toLowerCase().includes('capsicum')) grouped[country].pimenton++;
     });
 
-    // Convertir Sets a Arrays
-    Object.keys(grouped).forEach(country => {
-      grouped[country].hosts = Array.from(grouped[country].hosts);
-      grouped[country].years = Array.from(grouped[country].years).sort();
+    Object.keys(grouped).forEach(c => {
+      grouped[c].hosts = Array.from(grouped[c].hosts);
+      grouped[c].years = Array.from(grouped[c].years).sort();
     });
 
     setCountryData(grouped);
@@ -158,73 +140,61 @@ const Mapa = () => {
 
   const getFilteredCountries = () => {
     if (filter === 'GLOBAL') return Object.keys(countryData);
-    if (filter === 'TOMATE') return Object.keys(countryData).filter(c => countryData[c].tomate > 0);
-    if (filter === 'PIMENTÓN') return Object.keys(countryData).filter(c => countryData[c].pimenton > 0);
+    if (filter === 'TOMATO') return Object.keys(countryData).filter(c => countryData[c].tomate > 0);
+    if (filter === 'PEPPER') return Object.keys(countryData).filter(c => countryData[c].pimenton > 0);
     return [];
   };
 
   const getMarkerColor = (country) => {
-    const total = countryData[country].total;
-    if (total >= 50) return '#E74C3C'; // Rojo oscuro
-    if (total >= 20) return '#E67E22'; // Naranja
-    if (total >= 10) return '#F39C12'; // Naranja claro
-    return '#F8B739'; // Amarillo
+    let total = 0;
+    if (filter === 'GLOBAL') total = countryData[country].total;
+    if (filter === 'TOMATO') total = countryData[country].tomate;
+    if (filter === 'PEPPER') total = countryData[country].pimenton;
+
+    if (total >= 50) return '#E74C3C';
+    if (total >= 20) return '#E67E22';
+    if (total >= 10) return '#F39C12';
+    return '#F8B739';
   };
 
   const getMarkerSize = (country) => {
-    const total = countryData[country].total;
+    let total = 0;
+    if (filter === 'GLOBAL') total = countryData[country].total;
+    if (filter === 'TOMATO') total = countryData[country].tomate;
+    if (filter === 'PEPPER') total = countryData[country].pimenton;
+
     if (total >= 50) return 15;
     if (total >= 20) return 12;
     if (total >= 10) return 10;
     return 8;
   };
 
-  if (loading) {
-    return (
-      <section className="mapa-section">
-        <div className="loading">Cargando datos del mapa...</div>
-      </section>
-    );
-  }
+  const getLegendData = () => {
+    return [
+      { color: '#E74C3C', label: '50+ DETECTIONS' },
+      { color: '#E67E22', label: '20-49 DETECTIONS' },
+      { color: '#F39C12', label: '10-19 DETECTIONS' },
+      { color: '#F8B739', label: '1-9 DETECTIONS' },
+    ];
+  };
+
+  if (loading) return <section className="mapa-section"><div className="loading">Cargando datos del mapa...</div></section>;
 
   return (
     <section className="mapa-section">
       <div className="mapa-container">
         <h2 className="mapa-title">GLOBAL DISTRIBUTION OF ToBRFV</h2>
-        
+
         <div className="mapa-tabs">
-          <button 
-            className={filter === 'GLOBAL' ? 'tab active' : 'tab'}
-            onClick={() => setFilter('GLOBAL')}
-          >
-            GLOBAL
-          </button>
-          <button 
-            className={filter === 'TOMATO' ? 'tab active' : 'tab'}
-            onClick={() => setFilter('TOMATO')}
-          >
-            TOMATO
-          </button>
-          <button 
-            className={filter === 'PEPPER' ? 'tab active' : 'tab'}
-            onClick={() => setFilter('PEPPER')}
-          >
-            PEPPER
-          </button>
+          <button className={filter === 'GLOBAL' ? 'tab active' : 'tab'} onClick={() => setFilter('GLOBAL')}>GLOBAL</button>
+          <button className={filter === 'TOMATO' ? 'tab active' : 'tab'} onClick={() => setFilter('TOMATO')}>TOMATO</button>
+          <button className={filter === 'PEPPER' ? 'tab active' : 'tab'} onClick={() => setFilter('PEPPER')}>PEPPER</button>
         </div>
 
         <div className="map-wrapper">
-          <MapContainer
-            center={[20, 0]}
-            zoom={2}
-            style={{ height: '500px', width: '100%' }}
-            scrollWheelZoom={false}
-          >
-            <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            />
-            
+          <MapContainer center={[20, 0]} zoom={2} style={{ height: '500px', width: '100%' }} scrollWheelZoom={false}>
+            <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' />
+
             {getFilteredCountries().map(country => {
               const coords = COUNTRY_COORDS[country];
               if (!coords) return null;
@@ -247,38 +217,17 @@ const Mapa = () => {
                   <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
                     <div className="country-tooltip">
                       <strong>{country}</strong>
-                      <div>DETECTIONS: {info.total}</div>
+                      <div>DETECTIONS: {filter === 'GLOBAL' ? info.total : filter === 'TOMATO' ? info.tomate : info.pimenton}</div>
                     </div>
                   </Tooltip>
-                  
+
                   <Popup maxWidth={300}>
                     <div className="country-popup">
                       <h3>{country}</h3>
                       <div className="popup-stats">
-                        <div className="stat">
-                          <span className="label">📍 DETECTIONS:</span>
-                          <span className="value">{info.total}</span>
-                        </div>
-                        <div className="stat">
-                          <span className="label">📅 Detección:</span>
-                          <span className="value">{firstYear}</span>
-                        </div>
-                        <div className="stat">
-                          <span className="label">🌱 Hospederos:</span>
-                          <span className="value">{info.hosts.join(', ')}</span>
-                        </div>
-                        {info.tomate > 0 && (
-                          <div className="stat">
-                            <span className="label">🍅 Tomate:</span>
-                            <span className="value">{info.tomate}</span>
-                          </div>
-                        )}
-                        {info.pimenton > 0 && (
-                          <div className="stat">
-                            <span className="label">🌶️ Pimentón:</span>
-                            <span className="value">{info.pimenton}</span>
-                          </div>
-                        )}
+                        <div className="stat"><span className="label">📍 DETECTIONS:</span> <span className="value">{filter === 'GLOBAL' ? info.total : filter === 'TOMATO' ? info.tomate : info.pimenton}</span></div>
+                        <div className="stat"><span className="label">📅 Detección:</span> <span className="value">{firstYear}</span></div>
+                        <div className="stat"><span className="label">🌱 Hospederos:</span> <span className="value">{info.hosts.join(', ')}</span></div>
                       </div>
                     </div>
                   </Popup>
@@ -288,25 +237,16 @@ const Mapa = () => {
           </MapContainer>
         </div>
 
+        {/* Legend */}
         <div className="mapa-legend">
-          <h4>Label</h4>
+          <h4>Detections</h4>
           <div className="legend-items">
-            <div className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: '#E74C3C' }}></div>
-              <span>50+ DETECTIONS</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: '#E67E22' }}></div>
-              <span>20-49 DETECTIONS</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: '#F39C12' }}></div>
-              <span>10-19 DETECTIONS</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: '#F8B739' }}></div>
-              <span>1-9 DETECTIONS</span>
-            </div>
+            {getLegendData().map((item, idx) => (
+              <div className="legend-item" key={idx}>
+                <div className="legend-color" style={{ backgroundColor: item.color }}></div>
+                <span>{item.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -315,3 +255,4 @@ const Mapa = () => {
 };
 
 export default Mapa;
+

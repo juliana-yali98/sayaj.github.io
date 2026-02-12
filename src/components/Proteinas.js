@@ -10,7 +10,7 @@ const ProteinViewerPro = () => {
         padding: "80px 0"
       }}
     >
-      {/* Fondo EXACTAMENTE igual al Hero */}
+      {/* Fondo igual al Hero */}
       <VirusBackground />
 
       {/* Contenido */}
@@ -24,38 +24,45 @@ const ProteinViewerPro = () => {
         }}
       >
         <h2
-          style={{
-            fontSize: "28px",
-            fontWeight: "600",
-            marginBottom: "10px",
-            textAlign: "center",
-            color: "#1f2933"
-          }}
-        >
-          Structural Model of the Viral Protein
-        </h2>
+  style={{
+    fontSize: "2.5rem",              // Igual que GLOBAL DISTRIBUTION
+    fontWeight: "700",             // Mismo grosor
+    marginBottom: "40px",          // Igual separación
+    textAlign: "center",
+    color: "#ffffff",
+    textTransform: "uppercase",    // Todo en mayúsculas
+    textShadow: "0 2px 8px rgba(0,0,0,0.6)",
+    letterSpacing: "1px"           // Opcional: un poquito de espacio entre letras
+  }}
+>
+  Structural Model of the Viral Protein
+</h2>
+
+
 
         <p
           style={{
             textAlign: "center",
-            color: "#555",
+            color: "rgba(255,255,255,0.85)",
             marginBottom: "30px",
             maxWidth: "800px",
             marginInline: "auto",
-            lineHeight: "1.6"
+            lineHeight: "1.6",
+            textShadow: "0 2px 8px rgba(0,0,0,0.6)"
           }}
         >
           High-resolution structural model visualized using Mol*. 
           The structure can be interactively explored in 3D.
         </p>
 
+        {/* Mol* Viewer */}
         <div
           style={{
             width: "100%",
             height: "650px",
             borderRadius: "16px",
             overflow: "hidden",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
             backgroundColor: "#ffffff"
           }}
         >
@@ -73,9 +80,10 @@ const ProteinViewerPro = () => {
         <p
           style={{
             fontSize: "14px",
-            color: "#777",
+            color: "rgba(255,255,255,0.7)",
             marginTop: "20px",
-            textAlign: "center"
+            textAlign: "center",
+            textShadow: "0 2px 8px rgba(0,0,0,0.6)"
           }}
         >
           Figure 1. Three-dimensional structural model of the viral protein.
