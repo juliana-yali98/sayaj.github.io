@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./ComparativaPro.css";
+import "./Comparativa.css";
 
 function ComparativaPro() {
   const [hovered, setHovered] = useState(null);
