@@ -12,6 +12,7 @@ function App() {
   return (
     <div className="app">
       <Hero />
+      <Abstract />
       <Mapa />
       <Redes />
       <Proteinas />
