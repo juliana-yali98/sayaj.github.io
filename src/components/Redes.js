@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Polyline, CircleMarker, Popup, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import './RedesConMapa.css';
+import './Redes.css';
 
 const RedesConMapa = () => {
   const [activeTab, setActiveTab] = useState('antioquia');
