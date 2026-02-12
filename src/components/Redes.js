@@ -1,23 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Graph from 'graphology';
-import Sigma from 'sigma';
-import './Redes.css';
+import { MapContainer, TileLayer, Polyline, CircleMarker, Popup, Tooltip } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import './RedesConMapa.css';
 
-const Redes = () => {
+const RedesConMapa = () => {
   const [activeTab, setActiveTab] = useState('antioquia');
-  const [graphData, setGraphData] = useState(null);
+  const [networkData, setNetworkData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all'); // all, tomate, pimenton
-  const containerRef = useRef(null);
-  const sigmaRef = useRef(null);
+  const [filterType, setFilterType] = useState('all');
+  const [showConnections, setShowConnections] = useState(true);
+  const mapRef = useRef(null);
 
   useEffect(() => {
-    loadGraph(activeTab);
+    loadNetwork(activeTab);
   }, [activeTab]);
 
-  const loadGraph = async (region) => {
+  const loadNetwork = async (region) => {
     setLoading(true);
     try {
       const filename = region === 'antioquia' 
@@ -27,13 +26,12 @@ const Redes = () => {
       const response = await fetch(`${process.env.PUBLIC_URL}/${filename}`);
       const gexfText = await response.text();
       
-      const graph = parseGEXF(gexfText);
-      setGraphData(graph);
-      calculateStats(graph);
-      renderGraph(graph);
+      const data = parseGEXF(gexfText);
+      setNetworkData(data);
+      calculateStats(data);
       setLoading(false);
     } catch (error) {
-      console.error('Error loading graph:', error);
+      console.error('Error loading network:', error);
       setLoading(false);
     }
   };
@@ -42,18 +40,25 @@ const Redes = () => {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(gexfText, 'text/xml');
     
-    const graph = new Graph();
+    const nodes = [];
+    const edges = [];
+    const nodeMap = {};
     
     // Parse nodes
-    const nodes = xmlDoc.querySelectorAll('node');
-    nodes.forEach(node => {
+    const nodeElements = xmlDoc.querySelectorAll('node');
+    nodeElements.forEach(node => {
       const id = node.getAttribute('id');
       const label = node.getAttribute('label');
       
-      // Get position
+      // Get position (these are projected coordinates)
       const position = node.querySelector('viz\\:position, position');
       const x = parseFloat(position?.getAttribute('x') || 0);
       const y = parseFloat(position?.getAttribute('y') || 0);
+      
+      // Convert from projected coordinates to lat/lng
+      // Approximate conversion for Colombia (Web Mercator to WGS84)
+      const lng = x / 111320; // meters to degrees longitude
+      const lat = (180 / Math.PI) * (2 * Math.atan(Math.exp(y / 6378137)) - Math.PI / 2);
       
       // Get color
       const color = node.querySelector('viz\\:color, color');
@@ -72,7 +77,6 @@ const Redes = () => {
         const forId = att.getAttribute('for');
         const value = att.getAttribute('value');
         
-        // Map attribute IDs to names (based on GEXF structure)
         const attrMap = {
           '1': 'departamento',
           '2': 'municipio',
@@ -90,44 +94,51 @@ const Redes = () => {
         }
       });
       
-      graph.addNode(id, {
+      const nodeData = {
+        id,
         label: attributes.vereda || label,
-        x: x / 100000, // Scale down for better visualization
-        y: y / 100000,
-        size: Math.log(nodeSize + 1) * 2,
+        lat,
+        lng,
+        size: Math.log(nodeSize + 1) * 3,
         color: `rgb(${r}, ${g}, ${b})`,
         ...attributes
-      });
+      };
+      
+      nodes.push(nodeData);
+      nodeMap[id] = nodeData;
     });
     
     // Parse edges
-    const edges = xmlDoc.querySelectorAll('edge');
-    edges.forEach((edge, index) => {
+    const edgeElements = xmlDoc.querySelectorAll('edge');
+    edgeElements.forEach((edge, index) => {
       const source = edge.getAttribute('source');
       const target = edge.getAttribute('target');
       const weight = parseFloat(edge.getAttribute('weight') || 1);
       
-      if (graph.hasNode(source) && graph.hasNode(target)) {
-        graph.addEdge(source, target, {
+      if (nodeMap[source] && nodeMap[target]) {
+        edges.push({
+          id: index,
+          source: nodeMap[source],
+          target: nodeMap[target],
           weight: weight,
-          size: Math.log(weight + 1) * 0.5
+          opacity: Math.min(Math.log(weight + 1) / 10, 0.8)
         });
       }
     });
     
-    return graph;
+    return { nodes, edges };
   };
 
-  const calculateStats = (graph) => {
-    const nodes = graph.nodes();
+  const calculateStats = (data) => {
+    if (!data || !data.nodes) return;
+    
     let tomateCount = 0;
     let pimentonCount = 0;
     let bothCount = 0;
     
-    nodes.forEach(node => {
-      const attrs = graph.getNodeAttributes(node);
-      const hasTomate = attrs.tomate === true || attrs.tomate === 'true';
-      const hasPimenton = attrs.pimenton === true || attrs.pimenton === 'true';
+    data.nodes.forEach(node => {
+      const hasTomate = node.tomate === true || node.tomate === 'true';
+      const hasPimenton = node.pimenton === true || node.pimenton === 'true';
       
       if (hasTomate) tomateCount++;
       if (hasPimenton) pimentonCount++;
@@ -135,107 +146,59 @@ const Redes = () => {
     });
     
     setStats({
-      totalNodes: nodes.length,
-      totalEdges: graph.edges().length,
+      totalNodes: data.nodes.length,
+      totalEdges: data.edges.length,
       tomateNodes: tomateCount,
       pimentonNodes: pimentonCount,
       bothNodes: bothCount
     });
   };
 
-  const renderGraph = (graph) => {
-    if (!containerRef.current || !graph) return;
+  const getFilteredData = () => {
+    if (!networkData) return { nodes: [], edges: [] };
     
-    // Clear previous instance
-    if (sigmaRef.current) {
-      sigmaRef.current.kill();
+    let filteredNodes = networkData.nodes;
+    
+    if (filterType === 'tomate') {
+      filteredNodes = filteredNodes.filter(n => n.tomate === true || n.tomate === 'true');
+    } else if (filterType === 'pimenton') {
+      filteredNodes = filteredNodes.filter(n => n.pimenton === true || n.pimenton === 'true');
     }
     
-    // Apply filters
-    const filteredGraph = applyFilters(graph);
+    // Filter edges to only include those between visible nodes
+    const nodeIds = new Set(filteredNodes.map(n => n.id));
+    const filteredEdges = networkData.edges.filter(
+      e => nodeIds.has(e.source.id) && nodeIds.has(e.target.id)
+    );
     
-    // Create new Sigma instance
-    const sigma = new Sigma(filteredGraph, containerRef.current, {
-      renderLabels: true,
-      labelSize: 12,
-      labelWeight: 'bold',
-      defaultNodeColor: '#E74C3C',
-      defaultEdgeColor: '#ddd',
-      minCameraRatio: 0.1,
-      maxCameraRatio: 10,
-    });
-    
-    // Add hover effects
-    sigma.on('enterNode', ({ node }) => {
-      const nodeData = filteredGraph.getNodeAttributes(node);
-      const tooltip = document.getElementById('graph-tooltip');
-      if (tooltip && nodeData) {
-        tooltip.innerHTML = `
-          <strong>${nodeData.label || nodeData.vereda}</strong><br/>
-          Municipio: ${nodeData.municipio || 'N/A'}<br/>
-          ${nodeData.tomate ? '🍅 Tomate' : ''} 
-          ${nodeData.pimenton ? '🌶️ Pimentón' : ''}
-        `;
-        tooltip.style.display = 'block';
-      }
-    });
-    
-    sigma.on('leaveNode', () => {
-      const tooltip = document.getElementById('graph-tooltip');
-      if (tooltip) tooltip.style.display = 'none';
-    });
-    
-    sigmaRef.current = sigma;
+    return { nodes: filteredNodes, edges: filteredEdges };
   };
 
-  const applyFilters = (graph) => {
-    if (filterType === 'all' && !searchTerm) return graph;
-    
-    const filteredGraph = graph.copy();
-    const nodesToRemove = [];
-    
-    filteredGraph.forEachNode((node, attrs) => {
-      let shouldRemove = false;
-      
-      // Filter by type
-      if (filterType === 'tomate' && !attrs.tomate) shouldRemove = true;
-      if (filterType === 'pimenton' && !attrs.pimenton) shouldRemove = true;
-      
-      // Filter by search
-      if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase();
-        const matches = 
-          (attrs.vereda && attrs.vereda.toLowerCase().includes(searchLower)) ||
-          (attrs.municipio && attrs.municipio.toLowerCase().includes(searchLower));
-        if (!matches) shouldRemove = true;
-      }
-      
-      if (shouldRemove) nodesToRemove.push(node);
-    });
-    
-    nodesToRemove.forEach(node => filteredGraph.dropNode(node));
-    
-    return filteredGraph;
-  };
-
-  useEffect(() => {
-    if (graphData) {
-      renderGraph(graphData);
+  const getMapCenter = () => {
+    if (activeTab === 'antioquia') {
+      return [6.5, -75.5]; // Centro de Antioquia
     }
-  }, [filterType, searchTerm, graphData]);
+    return [4.5, -74]; // Centro de Colombia
+  };
+
+  const getMapZoom = () => {
+    return activeTab === 'antioquia' ? 9 : 6;
+  };
+
+  const { nodes, edges } = getFilteredData();
 
   return (
-    <section className="redes-section">
-      <div className="redes-container">
-        <h2 className="redes-title">REDES DE TRANSMISIÓN DEL VIRUS</h2>
+    <section className="redes-mapa-section">
+      <div className="redes-mapa-container">
+        <h2 className="redes-mapa-title">REDES DE TRANSMISIÓN DEL VIRUS</h2>
         
-        <p className="redes-description">
-          Explora las redes de transmisión del ToBRFV basadas en el modelo de gravedad log-transformado.
-          Cada nodo representa una vereda, y las conexiones muestran el riesgo de transmisión entre cultivos.
+        <p className="redes-mapa-description">
+          Visualización geográfica de las redes de transmisión del ToBRFV. 
+          Cada punto representa una vereda y las líneas muestran conexiones de riesgo de transmisión.
         </p>
 
         {/* Tabs */}
-        <div className="redes-tabs">
+        <div className="redes-mapa-tabs">
           <button 
             className={activeTab === 'antioquia' ? 'tab active' : 'tab'}
             onClick={() => setActiveTab('antioquia')}
@@ -251,17 +214,7 @@ const Redes = () => {
         </div>
 
         {/* Controls */}
-        <div className="redes-controls">
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="Buscar vereda o municipio..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-          </div>
-          
+        <div className="redes-mapa-controls">
           <div className="filter-buttons">
             <button 
               className={filterType === 'all' ? 'filter-btn active' : 'filter-btn'}
@@ -282,11 +235,22 @@ const Redes = () => {
               🌶️ Pimentón
             </button>
           </div>
+          
+          <div className="connection-toggle">
+            <label className="toggle-label">
+              <input
+                type="checkbox"
+                checked={showConnections}
+                onChange={(e) => setShowConnections(e.target.checked)}
+              />
+              <span>Mostrar conexiones</span>
+            </label>
+          </div>
         </div>
 
         {/* Stats */}
         {stats && (
-          <div className="redes-stats">
+          <div className="redes-mapa-stats">
             <div className="stat-card">
               <div className="stat-value">{stats.totalNodes}</div>
               <div className="stat-label">Veredas</div>
@@ -306,40 +270,121 @@ const Redes = () => {
           </div>
         )}
 
-        {/* Graph Container */}
-        <div className="graph-wrapper">
-          {loading && (
+        {/* Map */}
+        <div className="map-network-wrapper">
+          {loading ? (
             <div className="loading-overlay">
               <div className="spinner"></div>
               <p>Cargando red de {activeTab}...</p>
             </div>
+          ) : (
+            <MapContainer
+              ref={mapRef}
+              center={getMapCenter()}
+              zoom={getMapZoom()}
+              style={{ height: '700px', width: '100%' }}
+              key={activeTab} // Force re-render on tab change
+            >
+              <TileLayer
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              />
+              
+              {/* Draw connections first (so they appear behind nodes) */}
+              {showConnections && edges.slice(0, 5000).map((edge, idx) => (
+                <Polyline
+                  key={`edge-${idx}`}
+                  positions={[
+                    [edge.source.lat, edge.source.lng],
+                    [edge.target.lat, edge.target.lng]
+                  ]}
+                  color="#E67E22"
+                  weight={1}
+                  opacity={edge.opacity * 0.3}
+                />
+              ))}
+              
+              {/* Draw nodes */}
+              {nodes.map((node, idx) => (
+                <CircleMarker
+                  key={`node-${idx}`}
+                  center={[node.lat, node.lng]}
+                  radius={node.size}
+                  fillColor={node.color}
+                  color="#fff"
+                  weight={2}
+                  opacity={1}
+                  fillOpacity={0.8}
+                >
+                  <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
+                    <div className="node-tooltip-simple">
+                      <strong>{node.label}</strong>
+                    </div>
+                  </Tooltip>
+                  
+                  <Popup maxWidth={280}>
+                    <div className="node-popup">
+                      <h3>{node.label}</h3>
+                      <div className="popup-info">
+                        <div className="info-row">
+                          <span className="label">📍 Municipio:</span>
+                          <span className="value">{node.municipio}</span>
+                        </div>
+                        <div className="info-row">
+                          <span className="label">🏛️ Departamento:</span>
+                          <span className="value">{node.departamento}</span>
+                        </div>
+                        {node.tomate && (
+                          <div className="info-row">
+                            <span className="badge tomate">🍅 Cultivo de Tomate</span>
+                          </div>
+                        )}
+                        {node.pimenton && (
+                          <div className="info-row">
+                            <span className="badge pimenton">🌶️ Cultivo de Pimentón</span>
+                          </div>
+                        )}
+                        {node.pagerank && (
+                          <div className="info-row">
+                            <span className="label">📊 PageRank:</span>
+                            <span className="value">{parseFloat(node.pagerank).toExponential(2)}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Popup>
+                </CircleMarker>
+              ))}
+            </MapContainer>
           )}
-          <div ref={containerRef} className="graph-container"></div>
-          <div id="graph-tooltip" className="graph-tooltip"></div>
         </div>
 
         {/* Legend */}
-        <div className="redes-legend">
+        <div className="redes-mapa-legend">
           <h4>Leyenda</h4>
-          <div className="legend-items">
+          <div className="legend-grid">
             <div className="legend-item">
               <div className="legend-node" style={{ backgroundColor: '#E74C3C' }}></div>
-              <span>Nodo de cultivo</span>
+              <span>Vereda con cultivos</span>
             </div>
             <div className="legend-item">
               <div className="legend-line"></div>
               <span>Conexión de riesgo</span>
             </div>
             <div className="legend-item">
-              <span className="legend-badge">Tamaño = Importancia (PageRank)</span>
+              <span className="legend-info">Tamaño = Importancia en la red</span>
+            </div>
+            <div className="legend-item">
+              <span className="legend-info">Opacidad = Intensidad de conexión</span>
             </div>
           </div>
         </div>
 
-        <div className="redes-info">
+        <div className="redes-mapa-info">
           <p>
-            <strong>Cómo navegar:</strong> Usa la rueda del mouse para zoom, arrastra para mover,
-            y pasa el cursor sobre los nodos para ver información detallada.
+            <strong>💡 Nota:</strong> Esta visualización muestra la estructura espacial de la red de riesgo de transmisión.
+            Las conexiones representan rutas potenciales de dispersión del virus entre veredas cultivadoras.
+            {!showConnections && " Activa 'Mostrar conexiones' para ver las rutas de transmisión."}
           </p>
         </div>
       </div>
@@ -347,4 +392,4 @@ const Redes = () => {
   );
 };
 
-export default Redes;
+export default RedesConMapa;

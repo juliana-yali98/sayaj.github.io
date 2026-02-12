@@ -1,15 +1,15 @@
-.redes-section {
+.redes-mapa-section {
   padding: 80px 20px;
-  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
   min-height: 100vh;
 }
 
-.redes-container {
+.redes-mapa-container {
   max-width: 1400px;
   margin: 0 auto;
 }
 
-.redes-title {
+.redes-mapa-title {
   font-size: 2.5rem;
   font-weight: 700;
   text-align: center;
@@ -18,7 +18,7 @@
   letter-spacing: -0.5px;
 }
 
-.redes-description {
+.redes-mapa-description {
   text-align: center;
   max-width: 800px;
   margin: 0 auto 40px;
@@ -27,7 +27,7 @@
   line-height: 1.6;
 }
 
-.redes-tabs {
+.redes-mapa-tabs {
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -59,33 +59,13 @@
   box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
 
-.redes-controls {
+.redes-mapa-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
   gap: 20px;
   flex-wrap: wrap;
-}
-
-.search-box {
-  flex: 1;
-  min-width: 250px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 20px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #E67E22;
-  box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
 }
 
 .filter-buttons {
@@ -116,7 +96,29 @@
   color: white;
 }
 
-.redes-stats {
+.connection-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #555;
+  user-select: none;
+}
+
+.toggle-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #E74C3C;
+}
+
+.redes-mapa-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 20px;
@@ -151,19 +153,13 @@
   font-weight: 600;
 }
 
-.graph-wrapper {
+.map-network-wrapper {
   position: relative;
-  height: 600px;
-  background: white;
   border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
-}
-
-.graph-container {
-  width: 100%;
-  height: 100%;
+  background: white;
 }
 
 .loading-overlay {
@@ -177,7 +173,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 10;
+  z-index: 1000;
+  height: 700px;
 }
 
 .spinner {
@@ -201,28 +198,96 @@
   font-weight: 600;
 }
 
-.graph-tooltip {
-  position: fixed;
-  background: rgba(44, 62, 80, 0.95);
-  color: white;
-  padding: 12px 16px;
-  border-radius: 8px;
+/* Leaflet customizations */
+.leaflet-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Tooltip styles */
+.node-tooltip-simple {
+  text-align: center;
   font-size: 0.9rem;
-  pointer-events: none;
-  z-index: 1000;
-  display: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  max-width: 250px;
+  font-weight: 600;
 }
 
-.graph-tooltip strong {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 1rem;
-  color: #E67E22;
+.leaflet-tooltip {
+  background: rgba(44, 62, 80, 0.95);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  padding: 6px 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.redes-legend {
+.leaflet-tooltip-top:before {
+  border-top-color: rgba(44, 62, 80, 0.95);
+}
+
+/* Popup styles */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.node-popup h3 {
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-bottom: 3px solid #E67E22;
+  padding-bottom: 8px;
+}
+
+.popup-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row .label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.info-row .value {
+  font-weight: 600;
+  color: #E74C3C;
+  font-size: 0.9rem;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.badge.tomate {
+  background: linear-gradient(135deg, #E74C3C, #C0392B);
+  color: white;
+}
+
+.badge.pimenton {
+  background: linear-gradient(135deg, #E67E22, #D35400);
+  color: white;
+}
+
+.redes-mapa-legend {
   background: white;
   padding: 25px;
   border-radius: 12px;
@@ -230,17 +295,17 @@
   margin-bottom: 20px;
 }
 
-.redes-legend h4 {
+.redes-mapa-legend h4 {
   margin: 0 0 15px 0;
   color: #2c3e50;
   font-size: 1.1rem;
   font-weight: 700;
 }
 
-.legend-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
 }
 
 .legend-item {
@@ -260,16 +325,8 @@
 .legend-line {
   width: 40px;
   height: 2px;
-  background: #ddd;
-}
-
-.legend-badge {
-  background: #f8f9fa;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  color: #666;
-  font-weight: 600;
+  background: #E67E22;
+  opacity: 0.6;
 }
 
 .legend-item span {
@@ -278,35 +335,37 @@
   font-weight: 500;
 }
 
-.redes-info {
+.legend-info {
+  color: #666;
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+.redes-mapa-info {
   background: linear-gradient(135deg, #fff5f0, #ffe8dc);
   padding: 20px;
   border-radius: 12px;
   border-left: 4px solid #E67E22;
 }
 
-.redes-info p {
+.redes-mapa-info p {
   margin: 0;
   color: #555;
   line-height: 1.6;
 }
 
-.redes-info strong {
+.redes-mapa-info strong {
   color: #E74C3C;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .redes-title {
+  .redes-mapa-title {
     font-size: 1.8rem;
   }
 
-  .redes-controls {
+  .redes-mapa-controls {
     flex-direction: column;
-  }
-
-  .search-box {
-    width: 100%;
   }
 
   .filter-buttons {
@@ -314,11 +373,12 @@
     justify-content: center;
   }
 
-  .graph-wrapper {
-    height: 400px;
+  .map-network-wrapper,
+  .loading-overlay {
+    height: 500px;
   }
 
-  .redes-stats {
+  .redes-mapa-stats {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -326,14 +386,13 @@
     font-size: 1.5rem;
   }
 
-  .legend-items {
-    flex-direction: column;
-    gap: 10px;
+  .legend-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-/* Animation */
-.redes-container {
+/* Animations */
+.redes-mapa-container {
   animation: fadeIn 0.8s ease-out;
 }
 
@@ -346,4 +405,10 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Connection lines animation on hover */
+.leaflet-interactive:hover {
+  filter: brightness(1.2);
+  transition: filter 0.2s ease;
 }
