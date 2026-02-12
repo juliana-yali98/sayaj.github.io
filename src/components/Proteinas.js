@@ -7,14 +7,13 @@ const ProteinViewerPro = () => {
       style={{
         position: "relative",
         overflow: "hidden",
-        padding: "80px 0",
-        backgroundColor: "#f4f6f5"
+        padding: "80px 0"
       }}
     >
-      {/* Background Animation */}
-      <VirusBackground virusCount={18} cellCount={10} />
+      {/* Fondo EXACTAMENTE igual al Hero */}
+      <VirusBackground />
 
-      {/* Content Container */}
+      {/* Contenido */}
       <div
         style={{
           position: "relative",
@@ -50,7 +49,6 @@ const ProteinViewerPro = () => {
           The structure can be interactively explored in 3D.
         </p>
 
-        {/* Mol* Viewer Container */}
         <div
           style={{
             width: "100%",
